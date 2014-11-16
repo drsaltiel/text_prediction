@@ -1,0 +1,133 @@
+---
+title: "Milestone Report"
+output: html_document
+---
+
+```{r, echo = FALSE, cache = TRUE}
+library(tm)
+library(RWeka)
+char = readChar('~/coursera/data_science_coursera/capstone/final/en_US/subsamp.txt', file.info('~/coursera/data_science_coursera/capstone/final/en_US/subsamp.txt')$size)
+corpus <- Corpus(VectorSource(char))
+#corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, content_transformer(tolower))
+#corpus <- tm_map(corpus, removeWords, stopwords("english"))
+#corpus <- tm_map(corpus, stemDocument)
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removeNumbers)
+
+dtm <- DocumentTermMatrix(corpus, control = list(minWordLength = 1))
+tdm <- TermDocumentMatrix(corpus, control = list(minWordLength = 1))
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+```
+
+```{r, echo=FALSE, cache = TRUE}
+tokens2 <- NGramTokenizer(corpus, Weka_control(min = 2, max = 2, delimiters = " \\r\\n\\t"))
+tokens3 <- NGramTokenizer(corpus, Weka_control(min = 3, max = 3, delimiters = " \\r\\n\\t"))
+```
+```{r, echo=FALSE, cache=TRUE}
+m2<-as.matrix(tokens2)
+m3<-as.matrix(tokens3)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+tok2freq = sort(table(m2),decreasing=TRUE)
+tok3freq = sort(table(m3),decreasing=TRUE)
+```
+
+We are provided with 3 data sets: one containing entries from blogs, one from news, and one from twitter. 
+
+Some basic information about the data sets:
+
+* Blogs
+    * 899,288 lines
+    * 37,334,114 words
+    * 210,160,014 characters
+
+* News
+    * 1,010,242 lines
+    * 34,365,936 words
+    * 205,811,889 characters
+
+* Twitter
+    * 2,360,148 lines
+    * 30,359,804 words
+    * 167,105,338 characters
+    
+* All together
+    * 4,269,678 lines
+    * 102,059,854 words
+    * 583,077,241 characters
+
+I decided that since our predictive engine will need to work on any input, I will combine the training data into a single set containing news, blogs, and the twitter feed. This  disregards the information about the source of the training data, but I think will be the best approach for building our model (another approach would be to have different predictions based upon what 'type' of input we're given - tweet, blog post, etc.. - and then build a classifier to determine what this type is before we make our prediction.  I haven't examined this approach yet, but will look into it in the future).
+
+This is a very large dataset, so in order to lighten the computational load the following is based on ~1% of the entries in each file. These entries have been selected randomly (any given entry had a 0.01 probability of being included) and combined into a single data frame on which we will be performing our exploratory analysis. This subsample data set has 42,735 entries.
+
+### Processing Data
+
+The data was put into a corpus from which punctuation and numbers were removed and all letters were converted to lower case.  Future processing might include steming words (removing prefixes and suffixes to get to the word's root) and removing "stop-words" (common words that do not carry significant meaning such as 'the'), however right now we are merely exploring the data - further study must be done to see how such changes might impact predictive power in a model.
+
+### Most Common Words
+
+The top ten words in our corpus with their frequencies are:
+```{r} 
+as.data.frame(v[1:10])
+```
+
+After tokenizing the corpus into 2 and 3 word n-grams (ie combinations of 2 and 3 words that appear commonly together), we found the frequency of their occurance. The 10 most common 2-grams and their frequencies are:
+
+```{r, }
+as.data.frame(tok2freq[1:10])
+```
+
+                                                 
+And the most common 3-grams are:
+```{r}
+as.data.frame(tok3freq[1:10])
+```
+
+### Exploring the Data
+
+Next, let's look at how frequencies of different words and n-grams are distributed. For individual words, we see below a plot of the frequency of specific words against the frequency of that frequency.
+
+```{r, echo=FALSE}
+hist(as.data.frame(v)$v, 
+     breaks = 10000, 
+     xlim = c(0,50),
+     xlab = "Frequency of a Specific Word",
+     ylab = "Frequency of Appearance Frequency",
+     main = "Histogram of Word Frequencies")
+```
+
+In this plot the x-axis has been truncated in order to be able to see what appears near 0. An untruncated x-axis would go up to around 50000, but words that appear that often are sparse enough that the plot is uninteresting.  Here we can see a large majority of words appear between 1 and 5 times, however a fair number appear even more - an appreciable amount can be seen which appear up to 30 times.
+
+
+Let's look at the same for 2-gram tokens:
+
+```{r, echo=FALSE}
+hist(as.data.frame(tok2freq)$tok2freq, 
+     breaks = 10000, 
+     xlim = c(0,50),
+     xlab = "Frequency of a Specific 2-gram",
+     ylab = "Frequency of Appearance Frequency",
+     main = "Histogram of 2-gram Frequencies")
+```
+
+The x-axis has again been cut off in order to be able to see the data close to 0.  What this plot tells us is that the large majority of 2-gram tokens only occur once.  There are also a fair number that occur 2, 3, 4, or 5 times but this drops off very quickly - ie a very small portion of the 2-grams occur more than a couple times.
+
+And the same for 3-grams:
+
+```{r, echo=FALSE}
+hist(as.data.frame(tok3freq)$tok3freq, 
+     breaks = 1000, 
+     xlim = c(0,50),
+     xlab = "Frequency of a Specific 3-gram",
+     ylab = "Frequency of Appearance Frequency",
+     main = "Histogram of 3-gram Frequencies")
+```
+
+Here we see the same shape as for 2-grams but with an even sharper drop-off (once again the x-axis is cut off).
+
+### Conclusion
+
+We have presented above a basic exploratory analysis of the data provided, and we are now prepared to begin building our predictive model. By making a database of common n-grams (perhaps 2-5 word tokens), my plan for my first basic model is to effectively look up n-gram versions of the text i'm given in my database and return any matches, prioritizing longer word string matches.  From there I can attempt to make my model more sophisticated, perhaps by processing and choosing my training data more efficiently (to get the most power out of the smallest data source and increase time - eventually the model will have to run on the shiny server).
