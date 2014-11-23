@@ -7,40 +7,46 @@ options(mc.cores=1)
 paths = c('~/coursera/data_science_coursera/capstone/final/en_US/en_US.blogs.txt',
           '~/coursera/data_science_coursera/capstone/final/en_US/en_US.news.txt',
           '~/coursera/data_science_coursera/capstone/final/en_US/en_US.twitter.txt')
-paths <- c(blogs, news, twitter)
+#paths <- c(blogs, news, twitter)
 
 path <- 'all' #for naming file if only one specific source
 n_grams = 3
 fraction = 0.01
-
-#need this to write tokens as a list
+tokens <- vector(mode="list")
+#write tokens as a list
 #token, appearances
 for (path in paths){
     con <- file(path, "r") 
-    tokens <- vector(mode="list")
     line <- readLines(con, 1)
-    while (LINE IS NOT LAST LINE){
+    while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0){
         if (runif(1)<fraction){
             line <- strsplit(line[1], split = '[.!?]')
             for (sent in line){
-                #here i need to check if gram is already there
+                #check if gram is already there
                 #if it is append by one, if not create new element in list
-                gram<-tolower(NGramTokenizer(sent, Weka_control(min = n_grams, max = n_grams)))
+                grams<-tolower(NGramTokenizer(sent, Weka_control(min = n_grams, max = n_grams)))
+                for(gram in grams){
+                    if (gram %in% names(tokens)) {
+                        tokens[[gram]]<-tokens[[gram]]+1
+                    }
+                    else{
+                        tokens[[gram]]<-1
+                    }
+                }
             }
         }
-        line<-readLines(con,1)
+        #line<-readLines(con,1)
     }
     
-    tokens<-lapply(tokens,remove_sparse)
-    
-    #remove NA elements
-    tokens <- tokens[!is.na(tokens)]
-    
-    filename<-paste('path','tokens',n_grams,'.txt',sep='')
-    write(tokens,file=filename)
     close(con)
 }
 
+tokens<-lapply(tokens,remove_sparse)
+#remove NA elements
+tokens <- tokens[!is.na(tokens)]
+
+filename<-paste('path','tokens',n_grams,'.txt',sep='')
+write(tokens,file=filename, sep="\n")
 
 
 
