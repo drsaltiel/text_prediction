@@ -12,6 +12,8 @@ paths <- c(blogs, news, twitter)
 
 fraction = 0.01
 
+#need this to write tokens as a list
+#token, appearances
 for (path in paths){
     con <- file(path, "r") 
     line <- readLines(con, 1)
@@ -22,4 +24,17 @@ for (path in paths){
     
     
     close(con)
+}
+
+
+
+remove_sparse<-function(data, min_n = 2){
+    for (token in data){
+        if (data[[token]]<min_n){
+            data[[token]]<-NULL
+        }
+    }
+    #remove NULL elements
+    data=data[-(which(sapply(data,is.null),arr.ind=TRUE))]
+    return(data)
 }
