@@ -3,6 +3,13 @@ library(shiny)
 #change the maximum allowed upload (right now 30mB)
 options(shiny.maxRequestSize=30*1024^2)
 
+load('processed.RData')
+unlink('processed.RData')
+
+predict<-function(input_text){
+    return('the')
+}
+
 
 shinyServer(
     function(input,output){
@@ -31,5 +38,5 @@ shinyServer(
 #                      main = 'No Whiskeys Found to Match Your Criteria')
 #                 )
         
-    })
+#    })
 })

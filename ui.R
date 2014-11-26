@@ -1,5 +1,4 @@
 library(shiny)
-library(lattice)
 library(markdown)
 
 
@@ -9,7 +8,7 @@ shinyUI(navbarPage("Navigation",
         sidebarLayout(
             sidebarPanel(
                 h3('Enter text:'),
-                textInput('text', 'Input Text', value="")
+                textInput('text', 'Input Text', value=""),
                 #numericInput('id1', 'Numeric input, labeled id1', 0, min=0, max=10, step = 1),
 #                 sliderInput('body', 'I like my body:', value = 2, min = 0, max = 4, step = 1),
 #                 checkboxGroupInput('notes', 'I need these notes:',
@@ -32,7 +31,7 @@ shinyUI(navbarPage("Navigation",
                 h3('For'),
                 verbatimTextOutput('out1'),
                 h3('We Predict:'),
-                verbatimTextOutput('out2'),
+                verbatimTextOutput('out2')
             ))
     ),
     tabPanel("About",
