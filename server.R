@@ -34,6 +34,7 @@ shinyServer(
         
         
         output$out1<-renderPrint({input$text})
+        input_text<- paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
         output$out2<-renderPrint({suggest_from_tokens_freq(input$text, tokens)})
 
         
