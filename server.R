@@ -7,6 +7,7 @@ options(shiny.maxRequestSize=30*1024^2)
 load('processed.RData')
 
 suggest_from_tokens_freq<-function(phrase, tokens){
+    phrase<- paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
     #tokens_list<-c(tokens3, tokens2)
     
     t<-grep(phrase, names(tokens))
@@ -19,8 +20,8 @@ suggest_from_tokens_freq<-function(phrase, tokens){
     if (length(candidates) != 0){
         top <- sort(table(candidates), decreasing=TRUE)
         suggestion <- names(top[1])
-        #num <- max(top)
-        return(suggestion)
+        num <- max(top)
+        return(c(suggestion, num))
     }
     else{
         return(NULL)
@@ -34,8 +35,10 @@ shinyServer(
         
         
         output$out1<-renderPrint({input$text})
-        input_text<- paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
-        output$out2<-renderPrint({suggest_from_tokens_freq(input$text, tokens)})
+        
+        output$out2<-renderPrint({suggest_from_tokens_freq(input$text, tokens3)[1]})
+        
+        output$out3<-renderPrint({suggest_from_tokens_freq(input$text, tokens3)[2]})
 
         
 })
