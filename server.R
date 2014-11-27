@@ -7,17 +7,19 @@ options(shiny.maxRequestSize=30*1024^2)
 load('processed.RData')
 
 suggest_from_tokens_freq<-function(phrase, tokens){
+    #takes last n words for prediction
     phrase<- paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
-    #tokens_list<-c(tokens3, tokens2)
     
     t<-grep(phrase, names(tokens))
     candidates <- c()
     
     #for tokens with matching phrase, add next word to candidates
     for (i in t){
+        #adds next word after match to candidates
         candidates <- c(candidates, tail(strsplit(names(tokens[i+1]), split=' ')[[1]],1))
     }
     if (length(candidates) != 0){
+        #finds top match and returns ('match word', # of times this word follows)
         top <- sort(table(candidates), decreasing=TRUE)
         suggestion <- names(top[1])
         num <- max(top)
