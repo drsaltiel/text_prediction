@@ -36,11 +36,11 @@ shinyServer(
     function(input,output){
         
         
-        output$out1<-renderPrint({input$text})
+        output$out1<-renderText({input$text})
         
-        output$out2<-renderPrint({suggest_from_tokens_freq(input$text, tokens3)[1]})
+        output$out2<-renderText({suggest_from_tokens_freq(input$text, tokens3)[1]})
         
-        output$out3<-renderPrint({suggest_from_tokens_freq(input$text, tokens3)[2]})
+        output$out3<-renderText({suggest_from_tokens_freq(input$text, tokens3)[2]})
 
         
 })
