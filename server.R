@@ -7,6 +7,7 @@ options(shiny.maxRequestSize=30*1024^2)
 load('processed.RData')
 
 suggest_from_tokens_freq<-function(phrase, tokens){
+    if (phrase==''){return(NULL)}
     #takes last n words for prediction
     phrase<- paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
     
