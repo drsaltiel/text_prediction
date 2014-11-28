@@ -6,13 +6,28 @@ options(shiny.maxRequestSize=30*1024^2)
 
 load('processed.RData')
 
+suggest<-function(phrase, tokens4, tokens3, tokens2){
+    suggestion <- suggest_from_tokens_freq(phrase, tokens4, 4)
+    if(!is.null(suggestion)){ return(suggestion)}
+    else {
+        phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
+        suggestion <- suggest_from_tokens_freq(phrase, tokens3, 3)
+        if(!is.null(suggestion)){ return(suggestion)}
+        else{
+            phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
+            suggestion <- suggest_from_tokens_freq(phrase, tokens2, 2)
+            if(!is.null(suggestion)){ return(suggestion)}
+            else{return(NULL)}
+        }    
 
+    }
+}
 #GIVES WEIRD ERROR, NEED TO FIGURE OUT AND FIX
-suggest_from_tokens_freq<-function(phrase, tokens){
+suggest_from_tokens_freq<-function(phrase, tokens, n){
     if (phrase==''){return(NULL)}
     #takes last n words for prediction
     
-    phrase<- paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
+    phrase<- paste(tail(strsplit(phrase, split = ' ')[[1]], n-1), collapse = ' ')
     
     t<-grep(phrase, names(tokens))
     candidates <- c()
@@ -51,9 +66,9 @@ shinyServer(
         
         output$out1<-renderText({input$text})
         
-        output$out2<-renderText({suggest_from_tokens_freq(input$text, tokens3)[1]})
+        output$out2<-renderText({suggest(input$text, tokens4, tokens3, tokens2)[1]})
         
-        output$out3<-renderText({suggest_from_tokens_freq(input$text, tokens3)[2]})
+        output$out3<-renderText({suggest(input$text, tokens4, tokens3, tokens2)[2]})
 
         
 })
