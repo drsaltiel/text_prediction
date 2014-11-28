@@ -74,7 +74,10 @@ suggest_from_tokens_freq<-function(phrase, tokens, n){
         #top <- sort(table(candidates), decreasing=TRUE)
         suggestion <- names(which.max(candidates))
         num <- candidates[[suggestion]]
-        return(c(suggestion, num))
+        total <- 0
+        for (i in candidates){total<-total+i}
+        percent<-num*100/total
+        return(c(suggestion, percent))
     }
     else{
         return(NULL)
