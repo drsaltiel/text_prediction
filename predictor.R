@@ -34,23 +34,34 @@ suggest_from_tokens<-function(phrase, tokens){
 }
 
 suggest_from_tokens_freq<-function(phrase, tokens){
-    #need to change phrase to first to words of phrase
+    if (phrase==''){return(NULL)}
+    #need to change grep phrase to first words of phrase
     #since lists dont store words in order now need to compare
     #to not last word in phrase
-    #ie grep(first n-1 words of phrase)
+    #ie grep(phrase followed by single word)
     t<-grep(phrase, names(tokens))
     candidates <- vector(mode="list")
     
     #for tokens with matching phrase, add next word to candidates
     for (i in t){
-        candidates[[tail(strsplit(names(tokens[i]), split=' ')[[1]],1)]]<-
-            candidates[[tail(strsplit(names(tokens[1]), split=' ')[[1]],1)]]+tokens[[1]]
+        #using bad hack of matching first word means beginning of phrase matches
+        #SHOULD BE FIXED
+        split_t<-strsplit(names(tokens[i]), split=' ')[[1]]
+        if (strsplit(phrase, split=' ')[[1]][1] == split_t[1]){
+            if (is.null(candidates[[tail(split_t,1)]])){
+                candidates[[tail(split_t,1)]]<-tokens[[i]]
+            }
+            else{
+                candidates[[tail(split_t,1)]]<-
+                    candidates[[tail(split_t,1)]]+tokens[[i]]
+            }
+        }
     }
     if (length(candidates) != 0){
-        top <- sort(table(candidates), decreasing=TRUE)
-        suggestion <- names(top[1])
-        #num <- max(top)
-        return(suggestion)
+        #top <- sort(table(candidates), decreasing=TRUE)
+        suggestion <- names(which.max(candidates))
+        num <- candidates[[suggestion]]
+        return(c(suggestion, num))
     }
     else{
         return(NULL)
