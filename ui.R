@@ -19,7 +19,9 @@ shinyUI(navbarPage("Navigation",
                 h3('We Predict:'),
                 verbatimTextOutput('out2'),
                 h3('Match Percent:'),
-                verbatimTextOutput('out3')
+                verbatimTextOutput('out3'),
+                h3('Match Found In:'),
+                verbatimTextOutput('out4')
             ))
     ),
     tabPanel("About",

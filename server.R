@@ -12,15 +12,15 @@ suggest<-function(phrase, tokens4, tokens3, tokens2){
     if (len>=3){
         phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
         suggestion <- suggest_from_tokens_freq(phrase, tokens4, 4)
-        if(!is.null(suggestion)){ return(suggestion)}
+        if(!is.null(suggestion)){ return(c(suggestion, '4-gram'))}
         else {
             phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 3), collapse = ' ')
             suggestion <- suggest_from_tokens_freq(phrase, tokens3, 3)
-            if(!is.null(suggestion)){ return(suggestion)}
+            if(!is.null(suggestion)){ return(c(suggestion, '3-gram'))}
             else{
                 phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
                 suggestion <- suggest_from_tokens_freq(phrase, tokens2, 2)
-                if(!is.null(suggestion)){ return(suggestion)}
+                if(!is.null(suggestion)){ return(c(suggestion,'2-gram'))}
                 else{return(NULL)}
             }
             
@@ -28,18 +28,18 @@ suggest<-function(phrase, tokens4, tokens3, tokens2){
     }
     if (len==2){
         suggestion <- suggest_from_tokens_freq(phrase, tokens3, 3)
-        if(!is.null(suggestion)){ return(suggestion)}
+        if(!is.null(suggestion)){ return(c(suggestion, '3-gram'))}
         else{
             phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
             suggestion <- suggest_from_tokens_freq(phrase, tokens2, 2)
-            if(!is.null(suggestion)){ return(suggestion)}
+            if(!is.null(suggestion)){ return(c(suggestion,'2-gram'))}
             else{return(NULL)}
         }
     }
     if (len==1){
         phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
         suggestion <- suggest_from_tokens_freq(phrase, tokens2, 2)
-        if(!is.null(suggestion)){ return(suggestion)}
+        if(!is.null(suggestion)){ return(c(suggestion,'2-gram'))}
         else{return(NULL)}
     }
 }
@@ -95,6 +95,8 @@ shinyServer(
         output$out2<-renderText({suggest(input$text, tokens4, tokens3, tokens2)[1]})
         
         output$out3<-renderText({suggest(input$text, tokens4, tokens3, tokens2)[2]})
+        
+        output$out4<-renderText({suggest(input$text, tokens4, tokens3, tokens2)[3]})
 
         
 })
