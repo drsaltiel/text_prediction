@@ -7,6 +7,7 @@ options(shiny.maxRequestSize=30*1024^2)
 load('processed.RData')
 
 suggest<-function(phrase, tokens4, tokens3, tokens2){
+    phrase<-tolower(phrase)
     if (phrase==''){return(NULL)}
     len <- length(strsplit(phrase, split=' ')[[1]])
     if (len>=3){
