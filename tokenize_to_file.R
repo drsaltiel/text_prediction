@@ -1,7 +1,7 @@
 #script takes text files input, tokenizes, then writes tokenization to file
 
 n_grams = 3
-fraction = 0.001
+fraction = 0.1
 p <- 'all' #for naming file if only one specific source
 
 library(tm)
@@ -29,6 +29,7 @@ for (path in paths){
                 #if it is append by one, if not create new element in list
                 #SHOULD I CHANGE TO FIT PUNCTUATION, ETC????
                 #???????????????????????????????????
+                lapply(sent, FUN = function(x) gsub('[])(;:#%$^*\\~{}[&+=@/"`|<>_]+', "", x))
                 grams<-tolower(NGramTokenizer(sent, Weka_control(min = n_grams, max = n_grams)))
                 for(gram in grams){
                     if (gram %in% names(tokens)) {
@@ -52,8 +53,9 @@ tokens <- tokens[!is.na(tokens)]
 
 filename<-paste('~/coursera/data_science_coursera/capstone/final/', p,'tokens',n_grams,'.txt',sep='')
 
-output_list(tokens) #prints to file .txt
-save(tokens, file="processed.RData") # saves to RData
+tokens3<-tokens
+#output_list(tokens) #prints to file .txt
+save(tokens3, file="processed.RData") # saves to RData
 
 
 
