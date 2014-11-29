@@ -30,7 +30,10 @@ for (path in paths){
                 #SHOULD I CHANGE TO FIT PUNCTUATION, ETC????
                 #???????????????????????????????????
                 lapply(sent, FUN = function(x) gsub('[])(;:#%$^*\\~{}[&+=@/"`|<>_]+', "", x))
-                grams<-tolower(NGramTokenizer(sent, Weka_control(min = n_grams, max = n_grams)))
+                grams<-tolower(NGramTokenizer(sent,
+                                              Weka_control(min = n_grams, 
+                                                           max = n_grams,
+                                                           delimiters = " \\r\\n\\t")))
                 for(gram in grams){
                     if (gram %in% names(tokens)) {
                         tokens[[gram]]<-tokens[[gram]]+1
