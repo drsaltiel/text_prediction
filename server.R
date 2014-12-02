@@ -4,7 +4,7 @@ library(shiny)
 #change the maximum allowed upload (right now 30mB)
 options(shiny.maxRequestSize=30*1024^2)
 
-load('processed.RData')
+load('preprocessed.RData')
 
 suggest<-function(phrase, tokens4, tokens3, tokens2){
     phrase<-tolower(phrase)
