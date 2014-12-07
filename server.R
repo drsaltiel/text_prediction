@@ -22,7 +22,7 @@ suggest<-function(phrase, tokens4, tokens3, tokens2){
                 phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
                 suggestion <- suggest_from_tokens_freq(phrase, tokens2, 2)
                 if(!is.null(suggestion)){ return(c(suggestion,'2-gram'))}
-                else{return(NULL)}
+                else{return('the')}
             }
             
         }
@@ -34,14 +34,14 @@ suggest<-function(phrase, tokens4, tokens3, tokens2){
             phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
             suggestion <- suggest_from_tokens_freq(phrase, tokens2, 2)
             if(!is.null(suggestion)){ return(c(suggestion,'2-gram'))}
-            else{return(NULL)}
+            else{return('the')}
         }
     }
     if (len==1){
         phrase = paste(tail(strsplit(phrase, split = ' ')[[1]], 2), collapse = ' ')
         suggestion <- suggest_from_tokens_freq(phrase, tokens2, 2)
         if(!is.null(suggestion)){ return(c(suggestion,'2-gram'))}
-        else{return(NULL)}
+        else{return('the')}
     }
 }
 
