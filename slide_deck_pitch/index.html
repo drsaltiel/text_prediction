@@ -33,7 +33,7 @@
         <slide class="title-slide segue nobackground">
   <hgroup class="auto-fadein">
     <h1>Word Prediction</h1>
-    <h2>An Algorithm for Predicting your Next Word</h2>
+    <h2>An Algorithm for Predicting the Next Word in a Given Text</h2>
     <p><br/></p>
   </hgroup>
   <article></article>  
@@ -49,12 +49,14 @@
     <ol>
 <li>Enter your text</li>
 <li>Recieve a prediction for your next word</li>
+<li>Look at what level that word came from and how confident we are</li>
 </ol>
 
 <h4>What&#39;s going on</h4>
 
 <ul>
 <li>The program takes your words and cross references them with an established reference corpus</li>
+<li>From this corpus, the algorithm determines possible next words and relative likelyhoods, displaying for the user the word most likely to follow</li>
 </ul>
 
   </article>
@@ -68,6 +70,10 @@
   <article data-timings="">
     <ul>
 <li>Let&#39;s say I want to the predict the word after &#39;I want to&#39;:</li>
+<li>Enter text (&#39;I want to&#39;) into input box on the right</li>
+<li>Recieve predicted next word for input text (&#39;be&#39;)</li>
+<li>Below this word is a percent (21% in this case). The higher the percent, the more confident we are in the predicted word.  A low percent means there were many other words that were also likely.</li>
+<li>You are also told what level n-gram the prediction comes from (4-gram, the entire phrase was matched). The higher the n-gram, the more of the input text has been matched and the better the prediction.</li>
 </ul>
 
   </article>
@@ -76,20 +82,39 @@
 
 <slide class="" id="slide-3" style="background:;">
   <hgroup>
-    <h2>Here&#39;s some more stuff about stuff and whatnot:</h2>
+    <h2>How it Works</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>The algorithm used is a simple &quot;back off&quot; algorithm: first looks for largest n-gram matches then, if none are found, &#39;back&#39;s off&#39; to smaller n-grams. The largest n-grams we check against are 4-grams, so only the final three words of the input text are used for the prediction. If multiple matches are found, it picks the most common next word. To get an idea of confidence, the percent of matches for the predicted word out of total matches (for the largest n-gram level matched) is displayed (along with which n-gram this is).</p>
+
+<p>In order to speed up the prediction, the data was preprocessed:</p>
+
+<ol>
+<li>Subset of data was randomly sampled (different subset for each n-gram level, with replacement - ie bootstrapping)</li>
+<li>Subset was tokenized to n-gram level</li>
+<li>Tokens were saved as list: name = token, value = number of appearances</li>
+<li>Tokens with only one appearance were considered noise and were discarded</li>
+</ol>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-4" style="background:;">
   <hgroup>
-    <h2>And a last slide:</h2>
+    <h2>Future Directions:</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>In order to upload this algorthm to the shinyapps platform and have it run quickly, a simple algorithm and limited dataset was used.</p>
+
+<p>The main improvement to this algorithm would be to optimize it for speed and expand the training set, as well as check for matches in higher level n-grams.  Some other possible improvements to explore involving furthur complicating the algorithm would be:</p>
+
+<ul>
+<li>Actively learn - remember user-specific past entries and learn how the user talks / their common phrases</li>
+<li>Utalize language structure - learn verbs and nouns and utalize punctuation to determine what part of speech the prediction should be</li>
+<li>Recognize incomplete N-grams - if the first and third word match in a 4-gram, there&#39;s a good chance the 4th word would be correct as well.</li>
+</ul>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -112,13 +137,13 @@
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Here&#39;s some more stuff about stuff and whatnot:'>
+        data-slide=3 title='How it Works'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='And a last slide:'>
+        data-slide=4 title='Future Directions:'>
          4
       </a>
     </li>
