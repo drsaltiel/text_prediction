@@ -15,3 +15,6 @@ Key files are:
  	- all files associated with the slide deck presentation for coursera submission
 
 Assorted other R scripts - collection of R scripts developed at various points in the project.  Most are not completed / unused
+
+
+Final app is available at: https://drsaltiel.shinyapps.io/shiny_app/
